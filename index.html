@@ -21,7 +21,7 @@
   --bg:#EEF3F6; --surface:#FFFFFF; --surface-2:#E3ECF1; --ink:#0F1E2E; --muted:#4F6272;
   --line:#CFDBE3; --accent:#0B8F8B; --accent-ink:#FFFFFF; --accent-soft:#D5F0EE; --wa:#1E8E4E;
   --display:'Space Grotesk','Segoe UI',system-ui,sans-serif; --body:'Inter','Segoe UI',system-ui,sans-serif;
-  --nav-h:64px; --hero:#0F1E2E; color-scheme:light dark;
+  --hero:#0F1E2E; --nav-h:64px; color-scheme:light dark;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0A141D; --surface:#112230; --surface-2:#18303F; --ink:#E7EFF4; --muted:#9FB3C1;
@@ -113,6 +113,17 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);b
 nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;border-radius:12px;text-decoration:none;color:var(--muted);font-size:11.5px;font-weight:600}
 nav a svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav a[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(5,12,18,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none}
+.sheet-in{width:100%;max-width:640px;background:var(--surface);border-radius:20px 20px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));display:grid;gap:14px;max-height:92vh;overflow:auto}
+.sheet-in h2{font-size:20px}
+.warn{background:#FFF1D6;color:#5A3B00;border-radius:12px;padding:10px 12px;font-size:13.5px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warn{background:#3A2C0E;color:#FFD98A}}
+:root[data-theme="dark"] .warn{background:#3A2C0E;color:#FFD98A}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.steps li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.steps .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:14px}
+.shr{width:20px;height:20px;vertical-align:-4px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-reduced-motion:no-preference){.view.on{animation:in .18s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
 </style>
 </head>
@@ -232,6 +243,23 @@ nav a[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
     <p class="foot">Softechno Institute, Agra</p>
   </section>
 </main>
+
+<div class="sheet" id="iosSheet" role="dialog" aria-modal="true" aria-labelledby="iosTitle" hidden>
+  <div class="sheet-in">
+    <h2 id="iosTitle">Add Softechno to your iPhone</h2>
+    <p class="warn" id="iosWarn" hidden></p>
+    <ol class="steps">
+      <li><span class="n">1</span><span>Tap the <b>Share</b> button <svg class="shr" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg> <span id="shareWhere">at the bottom of Safari</span>.</span></li>
+      <li><span class="n">2</span><span>Scroll down the menu and tap <b>Add to Home Screen</b>.</span></li>
+      <li><span class="n">3</span><span>Tap <b>Add</b> at the top right. The Softechno icon appears on your home screen.</span></li>
+    </ol>
+    <div class="btns">
+      <button class="btn" type="button" id="iosCopy">Copy app link</button>
+      <button class="btn ghost" type="button" id="iosClose">Got it</button>
+    </div>
+    <p class="hint" id="iosNote" role="status" aria-live="polite"></p>
+  </div>
+</div>
 
 <nav aria-label="Main">
   <a href="#home" data-v="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Home</a>
@@ -357,13 +385,52 @@ nav a[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
   // install prompt
   var standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
   var deferred=null;
-  var iOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var ua=navigator.userAgent;
+  var iOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var inApp=iOS&&(!/Safari/.test(ua)||/FBAN|FBAV|Instagram|WhatsApp|Line\/|Snapchat|LinkedInApp|Twitter|GSA\//.test(ua));
+  var iosChrome=iOS&&/CriOS/.test(ua);
+  var APP_LINK='https://app.softechno.in/';
+  var sheetOpener=null;
+  function openIos(){
+    sheetOpener=document.activeElement;
+    var w=$('iosWarn');
+    if(inApp){w.hidden=false;w.textContent='You opened this inside another app (WhatsApp, Instagram, Facebook or similar). iPhone cannot install from here. Tap the menu in that app and choose Open in Safari, or copy the link below and paste it in Safari.'}
+    else if(iosChrome){w.hidden=false;w.textContent='Chrome on iPhone needs iOS 16.4 or newer. If you do not see Add to Home Screen, open this link in Safari instead.'}
+    else{w.hidden=true}
+    $('shareWhere').textContent=iosChrome?'in the address bar at the top right (or open the three dots menu, then Share)':'at the bottom of Safari (on newer iPhones it may be inside the three dots menu)';
+    $('iosSheet').hidden=false;$('iosClose').focus();
+  }
+  function closeIos(){
+    $('iosSheet').hidden=true;
+    try{localStorage.setItem('sfIosSeen','1')}catch(e){}
+    if(sheetOpener&&sheetOpener.focus){try{sheetOpener.focus()}catch(e){}}
+  }
+  $('iosClose').addEventListener('click',closeIos);
+  $('iosSheet').addEventListener('click',function(e){if(e.target===this)closeIos()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('iosSheet').hidden)closeIos()});
+  $('iosCopy').addEventListener('click',function(){
+    var note=$('iosNote');
+    function ok(){note.textContent='Link copied. Paste it in the Safari address bar.'}
+    function fail(){note.textContent='Could not copy. Please type app.softechno.in in Safari.'}
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(APP_LINK).then(ok,function(){legacy()})}else{legacy()}
+    }catch(e){legacy()}
+    function legacy(){
+      try{var t=document.createElement('textarea');t.value=APP_LINK;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();t.setSelectionRange(0,t.value.length);var r=document.execCommand('copy');document.body.removeChild(t);r?ok():fail()}catch(e){fail()}
+    }
+  });
   if(!standalone){
     $('installCard').hidden=false;
-    if(iOS){$('installText').textContent='On iPhone: tap the Share button in Safari, then choose Add to Home Screen.';$('installBtn').hidden=true}
+    if(iOS){
+      $('installText').textContent='iPhone has no Install button. Tap below to see the 3 easy steps to add this app to your home screen.';
+      $('installBtn').textContent='Show me how';
+      var seen=false;try{seen=localStorage.getItem('sfIosSeen')==='1'}catch(e){}
+      if(!seen){setTimeout(openIos,900)}
+    }
   }
   window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;$('installCard').hidden=false});
   $('installBtn').addEventListener('click',function(){
+    if(iOS){openIos();return}
     if(deferred){deferred.prompt();deferred.userChoice.finally(function(){deferred=null;$('installCard').hidden=true})}
     else{$('installText').textContent='Open your browser menu (three dots) and choose Install app or Add to Home screen.'}
   });
