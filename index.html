@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F1E2E">
+<meta name="description" content="Softechno Institute, Agra: Java, Python, Data Science, Full Stack and more. Enquire, find branches and open the student portal.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Softechno">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Softechno Institute App</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: phone app shell. Sticky brand bar, four views switched by hash, fixed bottom tab bar.
+   Palette: ink navy, teal accent (matches the site's teal button), cool paper neutrals. */
+:root{
+  --bg:#EEF3F6; --surface:#FFFFFF; --surface-2:#E3ECF1; --ink:#0F1E2E; --muted:#4F6272;
+  --line:#CFDBE3; --accent:#0B8F8B; --accent-ink:#FFFFFF; --accent-soft:#D5F0EE; --wa:#1E8E4E;
+  --display:'Space Grotesk','Segoe UI',system-ui,sans-serif; --body:'Inter','Segoe UI',system-ui,sans-serif;
+  --nav-h:64px; color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A141D; --surface:#112230; --surface-2:#18303F; --ink:#E7EFF4; --muted:#9FB3C1;
+  --line:#25404F; --accent:#2DD4CB; --accent-ink:#06201F; --accent-soft:#12383A; --wa:#3DD17A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A141D; --surface:#112230; --surface-2:#18303F; --ink:#E7EFF4; --muted:#9FB3C1;
+  --line:#25404F; --accent:#2DD4CB; --accent-ink:#06201F; --accent-soft:#12383A; --wa:#3DD17A; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 calc(var(--nav-h) + 24px)}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;margin-inline:-16px;padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));
+  background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.mark{width:36px;height:36px;border-radius:10px;background:var(--ink);color:var(--accent);display:grid;place-items:center;
+  font-family:var(--display);font-weight:700;font-size:20px;flex:none}
+.brand{min-width:0}
+.brand b{display:block;font-family:var(--display);font-size:16px;letter-spacing:.01em}
+.brand span{display:block;font-size:12px;color:var(--muted)}
+
+main{display:block;padding-top:16px;max-width:640px;margin:0 auto}
+.view{display:none;flex-direction:column;gap:16px}
+.view.on{display:flex}
+
+.hero{background:var(--ink);color:#F2F7FA;border-radius:20px;padding:22px 20px;display:flex;flex-direction:column;gap:14px}
+.hero h1{font-size:28px;letter-spacing:-.01em}
+.hero p{color:#B9CAD6;font-size:14.5px}
+.hero .row{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:12px;
+  border:1px solid transparent;background:var(--accent);color:var(--accent-ink);font-weight:600;text-decoration:none;cursor:pointer;text-align:center}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.hero .btn.ghost{border-color:#35546A;color:#F2F7FA}
+.btn.wa{background:var(--wa);color:#fff}
+[aria-disabled="true"]{opacity:.45;pointer-events:none}
+
+.quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:4px;text-decoration:none;min-width:0}
+.q b{font-family:var(--display);font-size:15px}
+.q span{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+
+.sec{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding-top:4px}
+.sec h2{font-size:18px}
+.sec a{font-size:13px;color:var(--accent);font-weight:600;text-decoration:none}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:500;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+
+.list{display:flex;flex-direction:column;gap:10px}
+.course{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;gap:8px}
+.course .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.course h3{font-size:17px}
+.tag{flex:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:3px 8px;border-radius:6px}
+.course p{color:var(--muted);font-size:14px}
+.course .go{justify-self:start;min-height:40px;padding:0 14px;font-size:14px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:12px}
+.card h2{font-size:18px}
+.card p{color:var(--muted);font-size:14px}
+label{display:grid;gap:6px;font-weight:600;font-size:13.5px}
+input,select{width:100%;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-weight:400;font-size:16px}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.err{color:#C0392B;font-weight:500;font-size:12.5px;min-height:0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .err{color:#FF8F80}}
+:root[data-theme="dark"] .err{color:#FF8F80}
+.preview{background:var(--surface-2);border-radius:12px;padding:12px 14px;font-size:13.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.btns{display:grid;gap:10px}
+
+.branch h3{font-size:17px}
+.branch .btns{grid-template-columns:repeat(2,minmax(0,1fr))}
+.num{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:.02em}
+details{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 16px}
+summary{min-height:52px;display:flex;align-items:center;font-weight:600;cursor:pointer}
+details ol{margin:0 0 14px;padding-left:20px;color:var(--muted);font-size:14px;display:grid;gap:6px}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding-top:8px}
+
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);
+  padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));
+  display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;border-radius:12px;text-decoration:none;color:var(--muted);font-size:11.5px;font-weight:600}
+nav a svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav a[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+@media (prefers-reduced-motion:no-preference){.view.on{animation:in .18s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="mark" aria-hidden="true">S</div>
+  <div class="brand"><b>Softechno Institute</b><span>Agra · Khandari and Sikandra</span></div>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="view" id="v-home" aria-label="Home">
+    <div class="hero">
+      <h1>Learn Java, Python, Data and Full Stack in Agra, or online.</h1>
+      <p>Hands-on training with live projects. Online batches and classroom batches at Khandari and Sikandra.</p>
+      <div class="row">
+        <a class="btn" href="#enquire">Enquire now</a>
+        <a class="btn ghost" href="#courses">See courses</a>
+      </div>
+    </div>
+
+    <div class="quick">
+      <a class="q" href="tel:+919027510577"><b>Call</b><span>9027510577</span></a>
+      <a class="q" href="https://wa.me/919027510577?text=Hello%20Softechno%20Institute%2C%20I%20want%20to%20know%20about%20your%20courses." target="_blank" rel="noopener"><b>WhatsApp</b><span>Chat with an advisor</span></a>
+      <a class="q" href="https://techno.softechno.in" target="_blank" rel="noopener"><b>Student Portal</b><span>techno.softechno.in</span></a>
+      <a class="q" href="#contact"><b>Branches</b><span>Khandari · Sikandra</span></a>
+    </div>
+
+    <div class="card" id="installCard" hidden>
+      <h2>Keep Softechno on your phone</h2>
+      <p id="installText">Add the app to your home screen for one-tap access to courses and enquiries.</p>
+      <button class="btn" type="button" id="installBtn">Install app</button>
+    </div>
+
+    <div class="sec"><h2>Popular courses</h2><a href="#courses">All courses</a></div>
+    <div class="list" id="popular"></div>
+  </section>
+
+  <!-- COURSES -->
+  <section class="view" id="v-courses" aria-label="Courses">
+    <div class="chips" id="chips" role="group" aria-label="Filter courses"></div>
+    <div class="list" id="courseList"></div>
+  </section>
+
+  <!-- ENQUIRE -->
+  <section class="view" id="v-enquire" aria-label="Enquire">
+    <form class="card" id="enqForm" novalidate>
+      <h2>Talk to an advisor</h2>
+      <p>Share your details and our counsellors will call you. You can also send the same message on WhatsApp.</p>
+      <label for="fName">Name
+        <input id="fName" autocomplete="name" placeholder="Your full name">
+      </label>
+      <label for="fPhone">Phone
+        <input id="fPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number" maxlength="10">
+        <span class="err" id="phoneErr" role="alert"></span>
+      </label>
+      <label for="fCourse">Course
+        <select id="fCourse"></select>
+      </label>
+      <label for="fMode">Preferred batch
+        <select id="fMode">
+          <option>Online</option>
+          <option>Classroom, Khandari</option>
+          <option>Classroom, Sikandra</option>
+          <option>Not sure yet</option>
+        </select>
+      </label>
+      <div class="preview" id="preview" hidden></div>
+      <div class="btns">
+        <button class="btn" type="submit" id="submitBtn">Submit enquiry</button>
+        <a class="btn wa" id="sendWa" href="#" target="_blank" rel="noopener" aria-disabled="true">Or send on WhatsApp</a>
+      </div>
+      <p class="hint" id="copyNote" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="view" id="v-contact" aria-label="Contact">
+    <div class="card branch">
+      <h3>Khandari branch</h3>
+      <p>Softechno Institute, Khandari, Agra</p>
+      <div class="btns">
+        <a class="btn" href="https://www.google.com/maps/search/?api=1&query=Softechno+Institute+Khandari+Agra" target="_blank" rel="noopener">Directions</a>
+        <a class="btn ghost" href="tel:+919027510577">Call</a>
+      </div>
+    </div>
+    <div class="card branch">
+      <h3>Sikandra branch</h3>
+      <p>Softechno Institute, Sikandra, Agra</p>
+      <div class="btns">
+        <a class="btn" href="https://www.google.com/maps/search/?api=1&query=Softechno+Institute+Sikandra+Agra" target="_blank" rel="noopener">Directions</a>
+        <a class="btn ghost" href="tel:+919027510577">Call</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Admission counselling</h2>
+      <p>Call or WhatsApp for syllabus, batch timings and admission guidance.</p>
+      <div class="num" id="phoneNum">9027510577</div>
+      <div class="btns">
+        <a class="btn wa" href="https://wa.me/919027510577" target="_blank" rel="noopener">WhatsApp</a>
+        <button class="btn ghost" type="button" id="copyPhone">Copy number</button>
+      </div>
+    </div>
+    <a class="card" href="https://techno.softechno.in" target="_blank" rel="noopener" style="text-decoration:none">
+      <h2>Student Portal</h2>
+      <p>Current students: sign in to techno.softechno.in</p>
+    </a>
+    <details>
+      <summary>Install this app on your phone</summary>
+      <ol>
+        <li><b>iPhone (Safari):</b> tap Share, then Add to Home Screen.</li>
+        <li><b>Android (Chrome):</b> tap the menu (three dots), then Install app or Add to Home screen.</li>
+        <li>Open it from your home screen like any other app.</li>
+      </ol>
+    </details>
+    <p class="foot">Softechno Institute, Agra</p>
+  </section>
+</main>
+
+<nav aria-label="Main">
+  <a href="#home" data-v="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Home</a>
+  <a href="#courses" data-v="courses"><svg viewBox="0 0 24 24"><path d="M4 5h7a3 3 0 013 3v12a2 2 0 00-2-2H4zM20 5h-7"/><path d="M20 5v13h-6"/></svg>Courses</a>
+  <a href="#enquire" data-v="enquire"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.5 7.2L4 20l1-4.6A8 8 0 1121 12z"/></svg>Enquire</a>
+  <a href="#contact" data-v="contact"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Contact</a>
+</nav>
+
+<script>
+(function(){
+  var PHONE='919027510577';
+  var COURSES=[
+    {n:'Java',g:'Programming',d:'Core Java, OOP, collections, JDBC and a final project.',pop:1},
+    {n:'Python',g:'Programming',d:'Python basics, OOP, file handling, libraries and projects.',pop:1},
+    {n:'Full Stack Development',g:'Programming',d:'HTML, CSS, JavaScript, backend and database, built into real apps.',pop:1},
+    {n:'Data Science',g:'Data',d:'Python, statistics, pandas and machine learning with projects.',pop:1},
+    {n:'Data Analytics',g:'Data',d:'Excel, SQL and Power BI for reports and dashboards.'},
+    {n:'SQL',g:'Data',d:'Queries, joins, subqueries and database design.'},
+    {n:'Power BI',g:'Data',d:'Data modelling, DAX and interactive dashboards.'},
+    {n:'AI and Machine Learning',g:'Data',d:'ML fundamentals and hands-on model building in Python.'},
+    {n:'Advanced Excel',g:'Office',d:'Formulas, pivot tables, dashboards and automation basics.'},
+    {n:'Admission counselling',g:'Admissions',d:'Guidance for MBA, MCA, BCA, BBA and Open Schooling.'}
+  ];
+  var GROUPS=['All','Programming','Data','Office','Admissions'];
+  var $=function(id){return document.getElementById(id)};
+  var active='All';
+
+  function courseCard(c){
+    var el=document.createElement('article');el.className='course';
+    el.innerHTML='<div class="top"><h3></h3><span class="tag"></span></div><p></p>';
+    el.querySelector('h3').textContent=c.n;
+    el.querySelector('.tag').textContent=c.g;
+    el.querySelector('p').textContent=c.d;
+    var b=document.createElement('a');b.className='btn ghost go';b.href='#enquire';b.textContent='Enquire about '+c.n;
+    b.addEventListener('click',function(){$('fCourse').value=c.n;update()});
+    el.appendChild(b);return el;
+  }
+  function renderPopular(){
+    var box=$('popular');box.textContent='';
+    COURSES.filter(function(c){return c.pop}).forEach(function(c){box.appendChild(courseCard(c))});
+  }
+  function renderCourses(){
+    var box=$('courseList');box.textContent='';
+    COURSES.filter(function(c){return active==='All'||c.g===active}).forEach(function(c){box.appendChild(courseCard(c))});
+  }
+  function renderChips(){
+    var box=$('chips');box.textContent='';
+    GROUPS.forEach(function(g){
+      var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=g;
+      b.setAttribute('aria-pressed',String(g===active));
+      b.addEventListener('click',function(){active=g;renderChips();renderCourses()});
+      box.appendChild(b);
+    });
+  }
+  function fillSelect(){
+    var s=$('fCourse');
+    COURSES.forEach(function(c){var o=document.createElement('option');o.textContent=c.n;s.appendChild(o)});
+  }
+
+  function message(){
+    var n=$('fName').value.trim(),p=$('fPhone').value.trim();
+    return 'Hello Softechno Institute,\nI am interested in '+$('fCourse').value+'.\nBatch: '+$('fMode').value+'\nName: '+(n||'-')+'\nPhone: '+(p||'-')+'\nPlease call me with details.';
+  }
+  var touchedPhone=false;
+  function update(){
+    var n=$('fName').value.trim(),p=$('fPhone').value.replace(/\D/g,'');
+    if($('fPhone').value!==p)$('fPhone').value=p;
+    var ok=n.length>1&&/^[6-9]\d{9}$/.test(p);
+    $('phoneErr').textContent=(touchedPhone&&p&&!/^[6-9]\d{9}$/.test(p))?'Enter a valid 10-digit mobile number.':'';
+    var m=message();
+    $('preview').textContent=m;
+    var a=$('sendWa');
+    a.href='https://wa.me/'+PHONE+'?text='+encodeURIComponent(m);
+    a.setAttribute('aria-disabled',ok?'false':'true');
+  }
+  ['fName','fPhone','fCourse','fMode'].forEach(function(id){
+    $(id).addEventListener('input',update);$(id).addEventListener('change',update);
+  });
+  $('fPhone').addEventListener('blur',function(){touchedPhone=true;update()});
+
+  function copy(text,note){
+    function fallback(el){try{var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+    var done=function(){note.textContent='Copied.'};
+    var failed=function(el){fallback(el);note.textContent='Select and copy the text shown above.'};
+    return {done:done,failed:failed};
+  }
+  $('copyPhone').addEventListener('click',function(){
+    var note=document.createElement('p');
+    var h=copy('9027510577',$('copyNote'));
+    try{navigator.clipboard.writeText('9027510577').then(function(){$('copyPhone').textContent='Copied'},function(){h.failed($('phoneNum'));$('copyPhone').textContent='Number selected'})}catch(e){h.failed($('phoneNum'));$('copyPhone').textContent='Number selected'}
+  });
+
+  function route(){
+    var v=(location.hash||'#home').slice(1);
+    if(['home','courses','enquire','contact'].indexOf(v)<0)v='home';
+    document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('on',s.id==='v-'+v)});
+    document.querySelectorAll('nav a').forEach(function(a){
+      if(a.dataset.v===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+    });
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',route);
+
+
+  var SHEET='https://script.google.com/macros/s/AKfycbwWQeRQR5UUN07W2LUBNAPi3TnoZ-9qIqnBX1I8od7qAqsVvMsBxqXJtsXGvno8L7vk/exec';
+  function valid(){var n=$('fName').value.trim(),p=$('fPhone').value.replace(/\D/g,'');return n.length>1&&/^[6-9]\d{9}$/.test(p)}
+  $('enqForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!valid()){touchedPhone=true;update();$('copyNote').textContent='Please enter your name and a valid 10-digit mobile number.';return}
+    var b=$('submitBtn');b.disabled=true;b.textContent='Sending...';
+    var body=new URLSearchParams({name:$('fName').value.trim(),phone:$('fPhone').value.trim(),course:$('fCourse').value+' ('+$('fMode').value+')',source:'app'});
+    fetch(SHEET,{method:'POST',mode:'no-cors',body:body}).then(function(){
+      b.textContent='Submitted';
+      $('copyNote').textContent='Thank you! We will call you soon. You can also message us on WhatsApp.';
+      $('enqForm').reset();update();
+      setTimeout(function(){b.disabled=false;b.textContent='Submit enquiry'},4000);
+    }).catch(function(){
+      b.disabled=false;b.textContent='Submit enquiry';
+      $('copyNote').textContent='Could not send. Please use WhatsApp or call 9027510577.';
+    });
+  });
+
+  // install prompt
+  var standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+  var deferred=null;
+  var iOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(!standalone){
+    $('installCard').hidden=false;
+    if(iOS){$('installText').textContent='On iPhone: tap the Share button in Safari, then choose Add to Home Screen.';$('installBtn').hidden=true}
+  }
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;$('installCard').hidden=false});
+  $('installBtn').addEventListener('click',function(){
+    if(deferred){deferred.prompt();deferred.userChoice.finally(function(){deferred=null;$('installCard').hidden=true})}
+    else{$('installText').textContent='Open your browser menu (three dots) and choose Install app or Add to Home screen.'}
+  });
+  window.addEventListener('appinstalled',function(){$('installCard').hidden=true});
+  if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+
+  renderPopular();renderChips();renderCourses();fillSelect();update();route();
+})();
+</script>
+</body>
+</html>
